@@ -1,42 +1,58 @@
 require 'mechanize'
 require 'nokogiri'
-# require 'farm_shed'
+require 'json'
 
-require_relative 'walker.rb'
-require_relative 'show_page.rb'
+require_relative '../modules/f'
+
+require_relative 'show_page'
+require_relative 'wbca_scribe'
 
 class BcaTree
   def initialize(url)
+    @started_at = Time.now
     @index_url = url
     @mech = Mechanize.new
+    goto_index_page
+    @title = @mech.page.css('.title').text
   end
 
-  def parse
-    get_and_parse_index
+  def parse_and_write
+    file_name = "#{@title}.html".downcase.gsub(/[- ]/, '_')
+    html = WbcaScribe.new(parse_index, @title).build_html
+    F.write("#{file_name}", html)
+    puts "Pages Parsed and HTML generated in
+         #{(Time.now - @started_at).round(2)} seconds."
   end
 
-  def get_and_parse_index
-    parse_index(index_page)
-  end
+  def parse_index
+    # h = {}
+    # time = Time.now
+    # get_index_links.each do |link|
+    #   url = @mech.page.uri.merge(link.uri)
+    #   key = link.text.strip
+    #
+    #   puts "Parsing #{key}....."
+    #
+    #   h[key] = ShowPage.new(url, @mech).parse
+    #   puts "#{key} parsed!\n\n"
+    # end
+    #
+    # puts "All pages parsed.\n\n"
+    # puts "Preparing to output HTML...."
 
-  def parse_index(page)
-    h = {}
-    get_index_links(page).each do |link|
-      url = page.uri.merge(link.uri)
-      key = link.text.strip
-      # puts key
-      if key == "Women's Open Teams"
-      h[key] = ShowPage.new(url, @mech).parse[:results]
-      end
-    end
+    #debug
+    f = F.new('temp.json')
+    # f.write(JSON.pretty_generate(h))
+    h = JSON.parse(f.read)
+
     h
   end
 
-  def get_index_links(page)
-    links = page.links_with(:href => /DivisionHome\.aspx\?DivisionID=/)
+  def get_index_links
+    links = @mech.page.links_with(:href => /DivisionHome\.aspx\?DivisionID=/)
   end
 
-  def index_page
+  def goto_index_page
      @mech.get(@index_url)
   end
 end

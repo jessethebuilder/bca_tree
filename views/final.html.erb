@@ -1,0 +1,13 @@
+<h1><%= @title %></h1>
+
+<table>
+  <% @data.each do |k, v| %>
+    <tr>
+      <td>
+        <a href="#<%= k %>">
+          <%= k %>
+        </a>
+      </td>
+    </tr>
+  <% end %>
+</table>

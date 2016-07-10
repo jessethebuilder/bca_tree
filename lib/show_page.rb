@@ -16,6 +16,9 @@ class ShowPage
     end
 
     parse_player_info!
+    order_winners!
+    empty_winner_exception!
+    sanatize_winners!
 
     @final
   end
@@ -30,7 +33,7 @@ class ShowPage
   def parse_player_table!
     table = @mech.page.search('table')[2]
     rows = table.search('tr')[2..-1]
-    parse_team_rows!(rows) if team_rows?(rows)
+    parse_team_rows!(rows)
   end
 
   def parse_team_rows!(rows)
@@ -42,17 +45,12 @@ class ShowPage
       @final[:teams][team] = [] unless @final[:teams].has_key?(team)
       @final[:teams][team] << name
     end
-  end
 
-  def team_rows?(rows)
-    same = 0
-    3.times do |i|
-      name = rows[i].search('td')[3].text
-      team = rows[i].search('td')[4].text
-      same += 1 if team.split('/').include?(name)
+    # This accidently gets all players with a key of empty string.
+    if @final[:teams].has_key?('')
+      @final[:players] = @final[:teams]['']
+      @final.delete(:teams)
     end
-
-    same != 3
   end
 
   def bracket_urls(page)
@@ -94,11 +92,9 @@ class ShowPage
         arr << winners
       end
       @final[:results][key][:winners] = [] unless @final[:results][key].has_key?(:winners)
-      @final[:results][key][:winners] << arr.flatten
+      @final[:results][key][:winners] << arr
+      @final[:results][key][:winners].flatten!
     end
-
-    order_winners!
-    sanatize_winners!
   end
 
   def bracket_rounds
@@ -107,6 +103,7 @@ class ShowPage
 
   def order_winners!
     @final[:results].each do |k, v|
+      v[:order] = 0 if k =~ /Winner/
       v[:order] = 0 if k =~ /1st Place/
       v[:order] = 1 if k =~ /2nd Place/
       v[:order] = 2 if k =~ /3rd Place/
@@ -116,11 +113,29 @@ class ShowPage
     end
   end
 
+  def empty_winner_exception!
+    # puts @final[:results]['Winner'][:winners].inspect
+    #
+    if @final[:results]['Winner'].nil?
+
+    else
+      if @final[:results]['Winner'][:winners] == []
+        @final[:results].delete('Winner')
+      elsif @final[:results]["1st Place"].nil?
+        @final[:results]["1st Place"] = @final[:results]["Winner"]
+        @final[:results].delete("Winner")
+      else
+        @final[:results]["2nd Place"][:winners] || @final[:results]["1st Place"][:winners]
+        @final[:results]["1st Place"][:winners] = @final[:results]["Winner"][:winners]
+        @final[:results].delete("Winner")
+      end
+    end
+  end
+
   def sanatize_winners!
     highers = []
     @final[:results].sort_by{ |k, v| v[:order] }.each do |key, v|
-      # puts v
-      winners = v[:winners].flatten.delete_if{ |win| win.match(/Winner of loser bracket/) }
+      winners = v[:winners].delete_if{ |win| win.match(/Winner of loser bracket/) }
       winners = winners.delete_if{ |win| win.match /Loser from W\d+-\d+/ }
       winners = winners - highers
       winners.uniq!
