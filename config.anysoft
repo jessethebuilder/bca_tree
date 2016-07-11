@@ -1,5 +1,5 @@
-base_url: http://ctsondemand.com/TournamentHome.aspx?TournamentID=47acc7a6-9dc7-4c90-aac7-99e737f614e3
-base_url: http://ctsondemand.com/TournamentHome.aspx?TournamentID=4908a3d0-8ac6-4f38-8b88-df78afe1c638
 base_url: http://ctsondemand.com/TournamentHome.aspx?TournamentID=f3f5d8fb-21c6-4283-bee8-5e41d49f5661
+base_url: http://ctsondemand.com/TournamentHome.aspx?TournamentID=4908a3d0-8ac6-4f38-8b88-df78afe1c638
+base_url: http://ctsondemand.com/TournamentHome.aspx?TournamentID=47acc7a6-9dc7-4c90-aac7-99e737f614e3
 use_bootstrap: true
 use_jquery: true

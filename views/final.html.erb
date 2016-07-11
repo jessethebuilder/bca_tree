@@ -18,9 +18,9 @@
     <h1 class="text-center"><%= @title %></h1>
     <h3 class="text-center"><%= @place %></h3>
     <h3 class="text-center"><%= @date %></h3>
-    <h2 class="text-center">Results</h2>
   </div>
-  <div class="container title_links">
+  <div id="title_links" class="container title_links">
+    <h2 class="text-center">Results</h2>
     <% counter = 0 %>
     <% @data.keys.each_slice(3) do |title_group| %>
       <div class="row">
@@ -52,7 +52,9 @@
   <% @data.each do |k, v| %>
     <% puts "Writing #{k}" %>
     <div class="container results_header" id="<%= k %>">
-      <h3 class="text-center"><%= k %></h3>
+      <h3 class="text-center">
+        <%= k %>
+      </h3>
     </div>
 
     <div class="container results_summary">
@@ -196,6 +198,15 @@
             </div>
           <% end %>
         <% end %>
+      </div>
+      <div class="container result_footer">
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="text-center">
+              <a href="#title_links">return to list</a>
+            </div>
+          </div>
+        </div>
       </div>
     <% end %>
   <% end %>
