@@ -32,7 +32,7 @@ class ShowPage
 
   def parse_player_table!
     table = @mech.page.search('table')[2]
-    rows = table.search('tr')[2..-1]
+    rows = table.search('tr')[1..-1]
     parse_team_rows!(rows)
   end
 
@@ -41,9 +41,14 @@ class ShowPage
     rows.each do |r|
       cols = r.search('td')
       team = cols[4].text.strip
+      # team_key = team[0..23]
       name = "#{cols[2].text.strip} #{cols[3].text.strip}"
-      @final[:teams][team] = [] unless @final[:teams].has_key?(team)
-      @final[:teams][team] << name
+      unless @final[:teams].has_key?(team)
+        @final[:teams][team] = {}
+        @final[:teams][team][:name] = team
+        @final[:teams][team][:players] = []
+      end
+      @final[:teams][team][:players] << name
     end
 
     # This accidently gets all players with a key of empty string.
@@ -76,7 +81,7 @@ class ShowPage
   end
 
   def parse_cash_round(round, cash)
-    key = round.text.match(/^(.+?)\u00A0/)[1]
+    key = round.text.match(/^(.+?)\u00A0/)[1][0..18]
     @final[:results][key] = {:payout => cash} unless @final[:results].has_key?(key)
     parse_cash_winners(round, key)
   end
@@ -114,8 +119,6 @@ class ShowPage
   end
 
   def empty_winner_exception!
-    # puts @final[:results]['Winner'][:winners].inspect
-    #
     if @final[:results]['Winner'].nil?
 
     else

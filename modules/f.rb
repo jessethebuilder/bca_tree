@@ -121,6 +121,13 @@ class F
     csv
   end
 
+  def F.file_to_env(path, delin: ': ')
+    vars = F.new(path).read.split("\n")
+    vars.each do |var|
+      s = var.split(delin)
+      ENV[s[0].upcase] = s[1]
+    end
+  end
 private
 
   def build_paths

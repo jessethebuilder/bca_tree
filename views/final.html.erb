@@ -1,13 +1,201 @@
-<h1><%= @title %></h1>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <title><%= @title %> - Results</title>
 
-<table>
-  <% @data.each do |k, v| %>
-    <tr>
-      <td>
-        <a href="#<%= k %>">
-          <%= k %>
-        </a>
-      </td>
-    </tr>
+  <link href="../../../../_css/wbca.css" rel="stylesheet" type="text/css">
+
+  <% if ENV['USE_BOOTSTRAP'] == 'true' %>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
   <% end %>
-</table>
+
+  <% if ENV['USE_JQUERY'] == 'true' %>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+  <% end %>
+</head>
+<body>
+  <div class="container page_header">
+    <h1 class="text-center"><%= @title %></h1>
+    <h3 class="text-center"><%= @place %></h3>
+    <h3 class="text-center"><%= @date %></h3>
+    <h2 class="text-center">Results</h2>
+
+    <!-- Title Links -->
+    <% counter = 0 %>
+    <% @data.keys.each_slice(3) do |title_group| %>
+      <div class="row">
+        <% title_group.each do |title| %>
+          <div class="col-xs-4">
+            <a href="#<%= title %>"><%= title %></a>
+            <small>
+              ( <%= @data[title]['total_entries'] %> entries)
+            </small>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+    <!-- Legue Abbreviations -->
+
+    <!-- Results -->
+  <% @data.each do |k, v| %>
+    <div class="container results team" id="<%= k %>">
+      <h3 class="text-center"><%= k %></h3>
+      <% if v.has_key?('teams') && !(k =~ /Doubles$/) %>
+        <% @teams = v['teams'] %>
+
+        <div class="row header_row">
+          <div class="col-xs-2"><strong>Place</strong></div>
+          <div class="col-xs-1"><strong>Prize</strong></div>
+          <div class="col-xs-3"><strong>Team Name</strong></div>
+          <div class="col-xs-6"><strong>Players</strong></div>
+        </div>
+
+        <% v['results'].sort_by{ |k, v| v['order'] }.each do |k, v| %>
+          <% v['winners'].each do |w| %>
+            <div class="row result">
+              <div class="col-xs-2">
+                <%= parse_place(k) %>
+              </div>
+              <div class="col-xs-1">
+                $<%= v['payout'] %>
+              </div>
+              <div class="col-xs-3">
+                <% team_key = parse_team_name(w, @teams) %>
+                <%= team_key %>
+              </div>
+              <div class="col-xs-6">
+                <%= @teams[team_key]['players'].delete_if{ |p| p =~ /\A(TBA|TBD)/}.join(', ') %>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      <% elsif k =~ /Doubles$/ %>
+        <% @teams = v['teams'] %>
+        <% @teams.inspect %>
+        <div class="container results doubles">
+          <div class="row">
+            <div class="row header_row hidden-md hidden-lg">
+              <div class="col-xs-3">
+                <strong>Place</strong>
+              </div>
+              <div class="col-xs-2">
+                <strong>Prize</strong>
+              </div>
+              <div class="col-xs-7">
+                <strong>Players</strong>
+              </div>
+            </div>
+            <% 2.times do %>
+              <div class="col-md-6 anchor_col">
+                <div class="row header_row hidden-sm hidden-xs">
+                  <div class="col-xs-3">
+                    <strong>Place</strong>
+                  </div>
+                  <div class="col-xs-2">
+                    <strong>Prize</strong>
+                  </div>
+                  <div class="col-xs-7">
+                    <strong>Players</strong>
+                  </div>
+                </div>
+              </div>
+              <% end %>
+            </div>
+
+          <% v['results'].sort_by{ |k, v| v['order'] }.each do |k, v| %>
+            <% v['winners'].each do |w| %>
+              <div class="row result">
+                <div class="col-xs-3">
+                  <%= parse_place(k) %>
+                </div>
+                <div class="col-xs-2">
+                  $<%= v['payout'] %>
+                </div>
+                <div class="col-xs-7">
+                  <% team_name = parse_team_name(w, @teams) %>
+                  <%= @teams[team_name]['players'].join(' and ') %>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="container results singles">
+          <div class="row">
+            <div class="row header_row hidden-md hidden-lg">
+              <div class="col-xs-3">
+                <strong>Place</strong>
+              </div>
+              <div class="col-xs-2">
+                <strong>Prize</strong>
+              </div>
+              <div class="col-xs-7">
+                <strong>Player</strong>
+              </div>
+            </div>
+
+            <% 3.times do %>
+              <div class="col-md-4 anchor_col">
+                <div class="row header_row hidden-sm hidden-xs">
+                  <div class="col-xs-3">
+                    <strong>Place</strong>
+                  </div>
+                  <div class="col-xs-2">
+                    <strong>Prize</strong>
+                  </div>
+                  <div class="col-xs-7">
+                    <strong>Player</strong>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+          <% v['results'].sort_by{ |k, v| v['order'] }.each do |k, v| %>
+            <% v['winners'].each do |w| %>
+              <div class="row result">
+                <div class="col-xs-3">
+                  <%= parse_place(k) %>
+                </div>
+                <div class="col-xs-2">
+                  $<%= v['payout'] %>
+                </div>
+                <div class="col-xs-7">
+                  <%= parse_player(w) %>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+<script>
+  function putInCols(selector){
+    var results = $(selector);
+
+    for(var i = 0; i < results.length; i++){
+      var r = $(results[i]);
+      var rows = r.find('.result');
+      var cols = r.find('.anchor_col');
+      console.log(rows.length);
+
+      var per_col = parseInt(rows.length / cols.length);
+      if(rows.length % cols.length != 0) per_col++;
+
+      var first_index = 0;
+      for(var j = 0; j < cols.length; j++){
+        var col = $(cols[j]);
+        col.append(rows.slice(first_index, first_index + per_col));
+        first_index = first_index + per_col;
+      }
+    }
+  }
+
+  $(function(){
+    putInCols('.singles');
+    putInCols('.doubles');
+  });
+</script>
+</body>
+</html>
