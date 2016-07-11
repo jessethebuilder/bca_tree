@@ -39,4 +39,41 @@ class WbcaScribe
   def get_binding
     binding()
   end
+
+  def total_payout(results)
+    winnings = []
+    results.each do |k, v|
+      v['winners'].each do
+        winnings << v['payout']
+      end
+    end
+
+    winnings.inject(0){ |n, sum| n + sum }
+  end
+
+  LEAGUE_ACRONYMS = {
+    'CPL' => 'Cascade Pool League',
+   	'INL' => "Inland BCA",
+    'LTD' => "Player's Club Limited",
+    'COB' => "Central Oregon BCA",
+    'LINC' => "Lincoln City",
+    'SLC' => "South Lincoln County",
+    'CWY' => " Central Washington - Yakima",
+    'LCC' => " Lower Columbia Clatsop",
+    'SWI' => " Southwest Idaho BCA",
+    'CC' => "Cherry City",
+    'LCP' => " Lower Columbia Penn.",
+    'TC' => "Thurston County BCA",
+    'EV' => "Emerald Valley",
+    'MID' => "Mid Valley BCA",
+    'TIO' => "Tioga BCA Pool League",
+    'GTE' => "Good Time Ernie's Inhouse League",
+    'MTV' => "Mountain View Pool League",
+    'UMP' => "Umpqua Valley",
+    'HIH' => "Harvey's Inn House",
+    'NPL' => "Northwest Player's League",
+    'WWA' => "Western Washington United BCA",
+    'ING' => "Inglis Valley BCA",
+    'PCGP' => "Player's Club Grants Pass"
+  }
 end

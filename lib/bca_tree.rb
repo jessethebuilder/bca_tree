@@ -25,7 +25,7 @@ class BcaTree
   def parse_and_write
     file_name = "#{@title}.html".downcase.gsub(/[- ]/, '_')
     html = WbcaScribe.new(parse_index, @title, @date, @place).build_html
-    F.write("#{file_name}", html)
+    F.write("output/#{file_name}", html)
     F.write("c:/wamp/www/sandbox/index.html", html)
     puts "Pages Parsed and HTML generated in
          #{(Time.now - @started_at).round(2)} seconds."
@@ -49,12 +49,16 @@ class BcaTree
     # puts "All pages parsed.\n\n"
     # puts "Preparing to output HTML...."
 
-    # to ensure I am getting stings for keys
-    f = F.new("#{@title}.json".downcase.gsub(/[- ]/, '_'))
+    f = F.new("output/#{@title}.json".downcase.gsub(/[- ]/, '_'))
     # f.write(JSON.pretty_generate(h))
     h = JSON.parse(f.read)
+    get_buy_in_fees(h)
 
     h
+  end
+
+  def get_buy_in_fees(h)
+
   end
 
   def get_index_links

@@ -1,0 +1,9 @@
+--SETUP
+1. Download Ruby
+  - Make sure it is available in your PATH
+2. Go to bca_tree in a console.
+3. Run 'bundle install'
+
+--USE
+1. Navigate to the bca_tree folder
+2. Type 'ruby bca_tree.rb'
