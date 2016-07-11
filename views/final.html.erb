@@ -50,6 +50,7 @@
 
     <!-- Results -->
   <% @data.each do |k, v| %>
+    <% puts "Writing #{k}" %>
     <div class="container results_header" id="<%= k %>">
       <h3 class="text-center"><%= k %></h3>
     </div>
@@ -58,15 +59,12 @@
       <div class="row">
         <div class="col-sm-4"></div>
         <div class="col-sm-4 summary">
-          <div class="text-center">
+          <h4 class="text-center">
             Total Entries: <%= v['total_entries'] %>
-          </div>
-          <div class="text-center">Entry Fee: xxx</div>
-          <div class="text-center">Entry Fees: xxx</div>
-          <div class="text-center">Added Money: xxx</div>
-          <div class="text-center">
+          </h4>
+          <h4 class="text-center">
             Total Payout: $<%= total_payout v['results'] %>
-          </div>
+          </h4>
         </div>
         <div class="col-sm-4"></div>
       </div>
@@ -201,8 +199,12 @@
       </div>
     <% end %>
   <% end %>
+
+  <% puts "Output Complete!" %>
 <script>
   function putInColsV(selector, item_selector){
+    // Cols are designated with .anchor_col
+    // Headers are desinated with .header_row
     var results = $(selector);
 
     for(var i = 0; i < results.length; i++){
@@ -216,7 +218,12 @@
       var first_index = 0;
       for(var j = 0; j < cols.length; j++){
         var col = $(cols[j]);
-        col.append(rows.slice(first_index, first_index + per_col));
+        var some_rows = rows.slice(first_index, first_index + per_col);
+        if(some_rows.length > 0){
+          col.append(some_rows);
+        } else {
+          col.find('.header_row').hide();
+        }
         first_index = first_index + per_col;
       }
     }

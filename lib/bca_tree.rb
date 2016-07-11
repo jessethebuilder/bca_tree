@@ -32,25 +32,25 @@ class BcaTree
   end
 
   def parse_index
-    # h = {}
-    # time = Time.now
-    # get_index_links.each do |link|
-    #   url = @mech.page.uri.merge(link.uri)
-    #   key = link.text.strip
-    #
-    #   # if key == "Women's Open Teams"
-    #   puts "Parsing #{key}....."
-    #
-    #   h[key] = ShowPage.new(url, @mech).parse
-    #   puts "#{key} parsed!\n\n"
-    # # end
+    h = {}
+    time = Time.now
+    get_index_links.each do |link|
+      url = @mech.page.uri.merge(link.uri)
+      key = link.text.strip
+
+      # if key == "Women's Open Teams"
+      puts "Parsing #{key}....."
+
+      h[key] = ShowPage.new(url, @mech).parse
+      puts "#{key} parsed!\n\n"
     # end
-    #
-    # puts "All pages parsed.\n\n"
-    # puts "Preparing to output HTML...."
+    end
+
+    puts "All pages parsed.\n\n"
+    puts "Preparing to output HTML...."
 
     f = F.new("output/#{@title}.json".downcase.gsub(/[- ]/, '_'))
-    # f.write(JSON.pretty_generate(h))
+    f.write(JSON.pretty_generate(h))
     h = JSON.parse(f.read)
     get_buy_in_fees(h)
 

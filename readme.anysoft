@@ -5,5 +5,6 @@
 3. Run 'bundle install'
 
 --USE
-1. Navigate to the bca_tree folder
-2. Type 'ruby bca_tree.rb'
+1. Set up options in config.anysoft
+2. Navigate to the bca_tree folder
+3. Type 'ruby bca_tree.rb'

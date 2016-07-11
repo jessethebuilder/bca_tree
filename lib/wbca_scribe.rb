@@ -32,7 +32,7 @@ class WbcaScribe
 
   def parse_team_name(team, teams)
     teams.each do |k, v|
-      return k if k[0..18] == team[0..18]
+      return k if k[0..12] == team[0..12]
     end
   end
 
