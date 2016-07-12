@@ -1,11 +1,12 @@
-require 'mechanize'
-require 'nokogiri'
-require 'json'
+require 'rubygems'
+require 'bundler/setup'
+Bundler.require
 
 require_relative 'show_page'
 require_relative 'wbca_scribe'
 
 class BcaTree
+  # include Mechanize
   def initialize(url)
     @started_at = Time.now
     @index_url = url

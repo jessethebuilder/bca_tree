@@ -1,9 +1,13 @@
 --SETUP
 1. Download Ruby
   - Make sure it is available in your PATH
+2. Go to bca_tree in a console.
+3. Type 'bundle install --local'
 
---USE
+--CONFIGURE
 1. Navigate to the bca_tree folder
 2. Set up options in config.anysoft
-3. Go to bca_tree in a console.
-4. Type 'ruby bca_tree.rb'
+
+--USE
+1. Go to bca_tree in a console.
+2. Type 'ruby bca_tree'
